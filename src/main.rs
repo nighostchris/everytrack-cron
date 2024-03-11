@@ -1,6 +1,7 @@
 mod config;
 mod external;
 mod logger;
+mod server;
 
 use config::load_env_vars;
 use external::db;
@@ -13,4 +14,6 @@ async fn main() {
   logger::init();
   // Create a new database client
   let db_client = db::client::init().await;
+  // Initialize web server
+  server::init(db_client.clone()).await;
 }
