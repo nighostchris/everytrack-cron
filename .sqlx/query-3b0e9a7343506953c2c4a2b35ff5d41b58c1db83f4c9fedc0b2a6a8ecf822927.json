@@ -1,0 +1,38 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n      SELECT ast.account_id as \"account_id!\", ast.unit, s.current_price, s.currency_id as \"currency_id!\"\n      FROM everytrack_backend.account_stock AS ast\n      JOIN everytrack_backend.stock AS s\n      ON s.id = ast.stock_id\n    ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "account_id!",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "unit",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "current_price",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "currency_id!",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      true,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "3b0e9a7343506953c2c4a2b35ff5d41b58c1db83f4c9fedc0b2a6a8ecf822927"
+}

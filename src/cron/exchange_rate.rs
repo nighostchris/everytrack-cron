@@ -3,7 +3,7 @@ use dotenvy::var;
 use serde_json::Value;
 use sqlx::{Pool, Postgres};
 use std::collections::HashMap;
-use tracing::{debug, error};
+use tracing::debug;
 
 #[tracing::instrument]
 pub async fn record_exchange_rate_snapshots(db_client: &Pool<Postgres>) -> Result<(), String> {

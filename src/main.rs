@@ -11,9 +11,11 @@ async fn main() {
   // Initialize logger
   logger::init();
   // Create a new database client
-  let db_client = external::db::client::init().await;
+  let db_client = external::db::client::init()
+    .await
+    .unwrap_or_else(|e| panic!("{}", e));
   // Setup cronjobs
-  cron::record_exchange_rate_snapshots(&db_client).await;
+  cron::init().await;
   // Initialize web server
-  // server::init(db_client.clone()).await;
+  server::init(db_client).await;
 }
