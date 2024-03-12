@@ -3,9 +3,9 @@ use uuid::Uuid;
 
 #[derive(Debug)]
 pub struct AccountBalanceSnapshot {
-  id: Uuid,
-  balance: String,
-  currency_id: Uuid,
+  pub id: Uuid,
+  pub balance: String,
+  pub currency_id: Uuid,
 }
 
 #[tracing::instrument]

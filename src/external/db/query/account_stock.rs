@@ -3,10 +3,10 @@ use uuid::Uuid;
 
 #[derive(Debug)]
 pub struct AccountStockHoldingBalanceSnapshot {
-  unit: String,
-  account_id: Uuid,
-  currency_id: Uuid,
-  current_price: String,
+  pub unit: String,
+  pub account_id: Uuid,
+  pub currency_id: Uuid,
+  pub current_price: String,
 }
 
 #[tracing::instrument]
