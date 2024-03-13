@@ -1,12 +1,16 @@
 use crate::external::db;
 use dotenvy::var;
 use serde_json::Value;
-use sqlx::{Pool, Postgres};
 use std::collections::HashMap;
+use std::error::Error;
 use tracing::debug;
 
 #[tracing::instrument]
-pub async fn record_exchange_rate_snapshots(db_client: &Pool<Postgres>) -> Result<(), String> {
+pub async fn record_exchange_rate_snapshots() -> Result<(), Box<dyn Error>> {
+  // Setup database connection
+  let db_client = db::client::init().await?;
+
+  // Get value for environment variable 'EXCHANGE_RATES_API_URL'
   let exchange_rates_api_url = var("EXCHANGE_RATES_API_URL").map_err(|e| {
     format!(
       "missing config for environment variable EXCHANGE_RATES_API_URL. {}",
@@ -14,9 +18,8 @@ pub async fn record_exchange_rate_snapshots(db_client: &Pool<Postgres>) -> Resul
     )
   })?;
 
-  let supported_currencies = db::query::currency::get_all_currencies(db_client)
-    .await
-    .map_err(|e| format!("{}", e))?;
+  // Get all supported currencies from postgres database
+  let supported_currencies = db::query::currency::get_all_currencies(&db_client).await?;
   debug!("got all supported currencies from database");
 
   // Try to fetch exchange rates API using each supported currency one by one
@@ -77,6 +80,9 @@ pub async fn record_exchange_rate_snapshots(db_client: &Pool<Postgres>) -> Resul
       );
     }
   }
+
+  // End database connection
+  db_client.close().await;
 
   Ok(())
 }
