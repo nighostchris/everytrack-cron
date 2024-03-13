@@ -6,21 +6,21 @@ use dotenvy::var;
 use handlers::health_check_handler;
 use sqlx::{Pool, Postgres};
 use std::net::SocketAddr;
-use std::sync::Arc;
+// use std::sync::Arc;
 use tokio::net::TcpListener;
 use tower::ServiceBuilder;
 use tower_http::trace::TraceLayer;
 use tracing::info;
 
-#[derive(Debug)]
-pub struct ServerState {
-  db: Pool<Postgres>,
-}
+// #[derive(Debug)]
+// pub struct ServerState {
+//   db: Pool<Postgres>,
+// }
 
 // Initialize an axum web server instance
 #[tracing::instrument]
-pub async fn init(db_client: Pool<Postgres>) {
-  let server_state = Arc::new(ServerState { db: db_client });
+pub async fn init(pg_client: Pool<Postgres>) {
+  // let server_state = Arc::new(ServerState { db: db_client });
   // https://stackoverflow.com/questions/74302133/how-to-log-and-filter-requests-with-axum-tokio
   let service = ServiceBuilder::new().layer(TraceLayer::new_for_http());
   // Define the routes for web server
@@ -28,7 +28,7 @@ pub async fn init(db_client: Pool<Postgres>) {
     .route("/", get(health_check_handler))
     // .nest("/api/v1", api_version_one_routes)
     .layer(service)
-    .with_state(server_state)
+    // .with_state(server_state)
     .into_make_service();
 
   // Try to get the environment variables 'WEB_SERVER_HOST' and 'WEB_SERVER_PORT' that define the public exposure details of web server

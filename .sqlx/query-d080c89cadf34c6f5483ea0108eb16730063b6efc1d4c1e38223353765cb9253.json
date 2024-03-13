@@ -1,0 +1,32 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n      SELECT id, balance, currency_id as \"currency_id!\"\n      FROM everytrack_backend.account\n    ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "balance",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "currency_id!",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "d080c89cadf34c6f5483ea0108eb16730063b6efc1d4c1e38223353765cb9253"
+}
