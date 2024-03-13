@@ -11,11 +11,11 @@ async fn main() {
   // Initialize logger
   logger::init();
   // Create a new database client
-  let db_client = external::db::client::init()
+  let pg_client = external::db::client::init_pg()
     .await
     .unwrap_or_else(|e| panic!("{}", e));
   // Setup cronjobs
   cron::init().await;
   // Initialize web server
-  server::init(db_client).await;
+  server::init(pg_client).await;
 }

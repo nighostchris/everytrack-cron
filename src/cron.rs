@@ -21,12 +21,11 @@ pub async fn init() {
   debug!("initialized cronjob scheduler");
 
   // Create cronjobs
-
   let cronjobs = vec![
     // Record exchange rate snapshots every day at 00:00
     create_cronjob(
       CRONJOB_NAMES[0],
-      "0 * * * * * *",
+      "0 0 0 * * * *",
       exchange_rate::record_exchange_rate_snapshots,
     ),
   ];

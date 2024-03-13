@@ -19,7 +19,7 @@ use tracing::info;
 
 // Initialize an axum web server instance
 #[tracing::instrument]
-pub async fn init(db_client: Pool<Postgres>) {
+pub async fn init(pg_client: Pool<Postgres>) {
   // let server_state = Arc::new(ServerState { db: db_client });
   // https://stackoverflow.com/questions/74302133/how-to-log-and-filter-requests-with-axum-tokio
   let service = ServiceBuilder::new().layer(TraceLayer::new_for_http());
