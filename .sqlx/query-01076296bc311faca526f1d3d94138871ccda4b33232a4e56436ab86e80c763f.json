@@ -1,0 +1,52 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n      SELECT s.id, country_id as \"country_id!\", currency_id as \"currency_id!\", s.name, ticker, current_price\n      FROM everytrack_backend.stock AS s\n      INNER JOIN everytrack_backend.country AS c\n      ON s.country_id = c.id\n      WHERE s.country_id = $1\n    ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "country_id!",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "currency_id!",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 3,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "ticker",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "current_price",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      true,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "01076296bc311faca526f1d3d94138871ccda4b33232a4e56436ab86e80c763f"
+}

@@ -1,5 +1,6 @@
 // mod balance;
 mod exchange_rate;
+mod stock;
 
 use std::error::Error;
 use std::future::Future;
@@ -11,9 +12,10 @@ use tracing::{debug, error};
 // sec   min   hour   day of month   month   day of week   year
 // *     *     *      *              *       *             *
 
-static CRONJOB_NAMES: [&str; 2] = [
+static CRONJOB_NAMES: [&str; 3] = [
   "record_exchange_rate_snapshots",
   "update_latest_exchange_rates",
+  "update_latest_stock_prices",
 ];
 
 #[tracing::instrument]
@@ -36,6 +38,12 @@ pub async fn init() {
       CRONJOB_NAMES[1],
       "0 */10 * * * * *",
       exchange_rate::update_latest_exchange_rates,
+    ),
+    // Update latest us stock prices every 10 minutes
+    create_cronjob(
+      CRONJOB_NAMES[2],
+      "0 */10 * * * * *",
+      stock::update_latest_us_stock_prices,
     ),
   ];
   debug!("going to add jobs to cronjob scheduler");
