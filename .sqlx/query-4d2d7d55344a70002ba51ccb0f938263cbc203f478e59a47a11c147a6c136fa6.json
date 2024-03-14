@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n      UPDATE everytrack_backend.exchange_rate\n      SET rate = $1\n      WHERE base_currency_id = $2 AND target_currency_id = $3\n    ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "4d2d7d55344a70002ba51ccb0f938263cbc203f478e59a47a11c147a6c136fa6"
+}

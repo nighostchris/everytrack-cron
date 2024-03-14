@@ -1,0 +1,23 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n      SELECT EXISTS(\n        SELECT 1 FROM everytrack_backend.exchange_rate\n        WHERE base_currency_id = $1 AND target_currency_id = $2\n      )\n    ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "exists",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "485d6cb0e5e1e713d3f309de6f5f93bf691a29f0314abc5d6fd2ea56d052e7b3"
+}

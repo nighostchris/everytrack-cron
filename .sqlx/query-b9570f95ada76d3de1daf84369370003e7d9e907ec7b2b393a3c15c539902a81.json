@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n      INSERT INTO everytrack_backend.exchange_rate (base_currency_id, target_currency_id, rate)\n      VALUES ($1, $2, $3)\n    ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "b9570f95ada76d3de1daf84369370003e7d9e907ec7b2b393a3c15c539902a81"
+}
