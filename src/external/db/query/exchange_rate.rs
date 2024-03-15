@@ -22,10 +22,7 @@ pub struct UpdateExchangeRateParams {
 }
 
 #[tracing::instrument]
-pub async fn check_existing_exchange_rate(
-  pg_client: &Pool<Postgres>,
-  params: CheckExistingExchangeRateParams,
-) -> Result<bool, String> {
+pub async fn check_existing_exchange_rate(pg_client: &Pool<Postgres>, params: CheckExistingExchangeRateParams) -> Result<bool, String> {
   let is_exchange_rate_record_exists = query_scalar!(
     r#"
       SELECT EXISTS(
@@ -38,23 +35,13 @@ pub async fn check_existing_exchange_rate(
   )
   .fetch_one(pg_client)
   .await
-  .map_err(|e| {
-    format!(
-      "failed to check if exchange rate record exists in postgresql database. {}",
-      e
-    )
-  });
+  .map_err(|e| format!("failed to check if exchange rate record exists in postgresql database. {}", e));
 
-  is_exchange_rate_record_exists.and_then(|r| {
-    r.ok_or("unexpected error occured when checking if exchange rate record exists".to_string())
-  })
+  is_exchange_rate_record_exists.and_then(|r| r.ok_or("unexpected error occured when checking if exchange rate record exists".to_string()))
 }
 
 #[tracing::instrument]
-pub async fn create_new_exchange_rate(
-  pg_client: &Pool<Postgres>,
-  params: CreateNewExchangeRateParams,
-) -> Result<(), String> {
+pub async fn create_new_exchange_rate(pg_client: &Pool<Postgres>, params: CreateNewExchangeRateParams) -> Result<(), String> {
   let rows_affected = query!(
     r#"
       INSERT INTO everytrack_backend.exchange_rate (base_currency_id, target_currency_id, rate)
@@ -66,29 +53,18 @@ pub async fn create_new_exchange_rate(
   )
   .execute(pg_client)
   .await
-  .map_err(|e| {
-    format!(
-      "failed to create new exchange rate record in postgresql database. {}",
-      e
-    )
-  })?
+  .map_err(|e| format!("failed to create new exchange rate record in postgresql database. {}", e))?
   .rows_affected();
 
   if rows_affected.ge(&0) {
     Ok(())
   } else {
-    Err(
-      "unexpected error occured when creating new exchange rate record in postgresql database"
-        .to_string(),
-    )
+    Err("unexpected error occured when creating new exchange rate record in postgresql database".to_string())
   }
 }
 
 #[tracing::instrument]
-pub async fn update_exchange_rate(
-  pg_client: &Pool<Postgres>,
-  params: UpdateExchangeRateParams,
-) -> Result<(), String> {
+pub async fn update_exchange_rate(pg_client: &Pool<Postgres>, params: UpdateExchangeRateParams) -> Result<(), String> {
   let rows_affected = query!(
     r#"
       UPDATE everytrack_backend.exchange_rate
@@ -101,12 +77,7 @@ pub async fn update_exchange_rate(
   )
   .execute(pg_client)
   .await
-  .map_err(|e| {
-    format!(
-      "failed to update exchange rate in postgresql database. {}",
-      e
-    )
-  })?
+  .map_err(|e| format!("failed to update exchange rate in postgresql database. {}", e))?
   .rows_affected();
 
   if rows_affected.ge(&0) {

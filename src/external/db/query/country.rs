@@ -9,10 +9,7 @@ pub struct Country {
 }
 
 #[tracing::instrument]
-pub async fn get_country_by_code(
-  pg_client: &Pool<Postgres>,
-  code: &str,
-) -> Result<Country, String> {
+pub async fn get_country_by_code(pg_client: &Pool<Postgres>, code: &str) -> Result<Country, String> {
   query_as!(
     Country,
     r#"
@@ -23,10 +20,5 @@ pub async fn get_country_by_code(
   )
   .fetch_one(pg_client)
   .await
-  .map_err(|e| {
-    format!(
-      "failed to get country by code from postgresql database. {}",
-      e
-    )
-  })
+  .map_err(|e| format!("failed to get country by code from postgresql database. {}", e))
 }

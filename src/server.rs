@@ -32,35 +32,15 @@ pub async fn init(pg_client: Pool<Postgres>) {
     .into_make_service();
 
   // Try to get the environment variables 'WEB_SERVER_HOST' and 'WEB_SERVER_PORT' that define the public exposure details of web server
-  let web_server_host = var("WEB_SERVER_HOST").unwrap_or_else(|e| {
-    panic!(
-      "Missing config for environment variable WEB_SERVER_HOST. {}",
-      e
-    )
-  });
-  let web_server_port = var("WEB_SERVER_PORT").unwrap_or_else(|e| {
-    panic!(
-      "Missing config for environment variable WEB_SERVER_PORT. {}",
-      e
-    )
-  });
-  info!(
-    "{}",
-    format!(
-      "web server is listening at {}:{}",
-      web_server_host, web_server_port
-    )
-  );
+  let web_server_host = var("WEB_SERVER_HOST").unwrap_or_else(|e| panic!("Missing config for environment variable WEB_SERVER_HOST. {}", e));
+  let web_server_port = var("WEB_SERVER_PORT").unwrap_or_else(|e| panic!("Missing config for environment variable WEB_SERVER_PORT. {}", e));
+  info!("{}", format!("web server is listening at {}:{}", web_server_host, web_server_port));
 
   // Finally start up server and serve the endpoints
   axum::serve(
-    TcpListener::bind(
-      &format!("{}:{}", web_server_host, web_server_port)
-        .parse::<SocketAddr>()
-        .unwrap(),
-    )
-    .await
-    .unwrap(),
+    TcpListener::bind(&format!("{}:{}", web_server_host, web_server_port).parse::<SocketAddr>().unwrap())
+      .await
+      .unwrap(),
     app,
   )
   .await

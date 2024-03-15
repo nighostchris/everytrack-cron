@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n      UPDATE everytrack_backend.account SET balance = $1 WHERE id = $2\n    ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "d082396b2deb38fea4b23197f2253520d81034deabd6dfe4bdc06f3acd2d85c7"
+}

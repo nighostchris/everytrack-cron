@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n      INSERT INTO everytrack_backend.transaction (client_id, account_id, currency_id, name, category, amount, income, remarks, executed_at)\n      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)\n    ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Uuid",
+        "Text",
+        "Text",
+        "Text",
+        "Bool",
+        "Text",
+        "Timestamptz"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "d0eb5d34b64b6d72952569fb659756c0661610422889deefca4bf8da71e5efdd"
+}

@@ -19,10 +19,5 @@ pub async fn get_all_currencies(db_client: &Pool<Postgres>) -> Result<Vec<Curren
   )
   .fetch_all(db_client)
   .await
-  .map_err(|e| {
-    format!(
-      "failed to get all supported currencies from database. {}",
-      e
-    )
-  })
+  .map_err(|e| format!("failed to get all supported currencies from database. {}", e))
 }

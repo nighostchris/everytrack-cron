@@ -79,10 +79,7 @@ where
       serde_json::Value::String(event.metadata().level().to_string().to_lowercase()),
     );
     // Log the location / module where the span / event happens
-    output.insert(
-      "target",
-      serde_json::Value::String(event.metadata().target().to_string()),
-    );
+    output.insert("target", serde_json::Value::String(event.metadata().target().to_string()));
     // Log the custom message we typed
     event_visitor.get_storage().iter().for_each(|(key, value)| {
       output.insert(key, value.clone());
@@ -93,10 +90,7 @@ where
     if let Some(span) = current_span {
       let extensions = span.extensions();
       // Log function name
-      output.insert(
-        "function",
-        serde_json::Value::String(span.name().to_string()),
-      );
+      output.insert("function", serde_json::Value::String(span.name().to_string()));
       // Get the data from extensions that store in on_new_span step
       if let Some(visitor) = extensions.get::<JsonStorage>() {
         for (key, value) in visitor.get_storage() {
@@ -113,10 +107,7 @@ where
       output.insert("params", serde_json::json!(parameters));
     }
 
-    println!(
-      "{}",
-      serde_json::to_string_pretty(&serde_json::json!(output)).unwrap()
-    );
+    println!("{}", serde_json::to_string_pretty(&serde_json::json!(output)).unwrap());
   }
 }
 
@@ -142,14 +133,10 @@ impl<'a> Visit for JsonStorage<'a> {
   }
 
   fn record_debug(&mut self, field: &Field, value: &dyn std::fmt::Debug) {
-    self
-      .storage
-      .insert(field.name(), serde_json::json!(format!("{:?}", value)));
+    self.storage.insert(field.name(), serde_json::json!(format!("{:?}", value)));
   }
 
   fn record_error(&mut self, field: &Field, value: &(dyn std::error::Error + 'static)) {
-    self
-      .storage
-      .insert(field.name(), serde_json::json!(value.to_string()));
+    self.storage.insert(field.name(), serde_json::json!(value.to_string()));
   }
 }

@@ -18,10 +18,7 @@ pub struct UpdateStockCurrentPriceParams {
 }
 
 #[tracing::instrument]
-pub async fn get_all_stocks_by_country_id(
-  pg_client: &Pool<Postgres>,
-  country_id: &str,
-) -> Result<Vec<Stock>, String> {
+pub async fn get_all_stocks_by_country_id(pg_client: &Pool<Postgres>, country_id: &str) -> Result<Vec<Stock>, String> {
   query_as!(
     Stock,
     r#"
@@ -35,19 +32,11 @@ pub async fn get_all_stocks_by_country_id(
   )
   .fetch_all(pg_client)
   .await
-  .map_err(|e| {
-    format!(
-      "failed to get all stocks by country id from postgresql database. {}",
-      e
-    )
-  })
+  .map_err(|e| format!("failed to get all stocks by country id from postgresql database. {}", e))
 }
 
 #[tracing::instrument]
-pub async fn update_stock_current_price(
-  pg_client: &Pool<Postgres>,
-  params: UpdateStockCurrentPriceParams,
-) -> Result<(), String> {
+pub async fn update_stock_current_price(pg_client: &Pool<Postgres>, params: UpdateStockCurrentPriceParams) -> Result<(), String> {
   let rows_affected = query!(
     r#"
       UPDATE everytrack_backend.stock
@@ -58,20 +47,12 @@ pub async fn update_stock_current_price(
   )
   .execute(pg_client)
   .await
-  .map_err(|e| {
-    format!(
-      "failed to update stock current price in postgresql database. {}",
-      e
-    )
-  })?
+  .map_err(|e| format!("failed to update stock current price in postgresql database. {}", e))?
   .rows_affected();
 
   if rows_affected.ge(&0) {
     Ok(())
   } else {
-    Err(
-      "unexpected error occured when updating stock current price in postgresql database"
-        .to_string(),
-    )
+    Err("unexpected error occured when updating stock current price in postgresql database".to_string())
   }
 }

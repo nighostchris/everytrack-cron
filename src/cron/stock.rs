@@ -1,8 +1,6 @@
 use crate::external::db::client;
 use crate::external::db::query::country::get_country_by_code;
-use crate::external::db::query::stock::{
-  get_all_stocks_by_country_id, update_stock_current_price, UpdateStockCurrentPriceParams,
-};
+use crate::external::db::query::stock::{get_all_stocks_by_country_id, update_stock_current_price, UpdateStockCurrentPriceParams};
 use std::error::Error;
 use tracing::debug;
 use yahoo_finance_api::YahooConnector;
@@ -31,12 +29,7 @@ pub async fn update_latest_us_stock_prices() -> Result<(), Box<dyn Error>> {
       .await
       .map_err(|e| format!("failed to get latest quote for {}. {}", stock.ticker, e))?
       .last_quote()
-      .map_err(|e| {
-        format!(
-          "failed to extract last quote from latest quote of {}. {}",
-          stock.ticker, e
-        )
-      })?;
+      .map_err(|e| format!("failed to extract last quote from latest quote of {}. {}", stock.ticker, e))?;
 
     // Update current price of the target stock in database
     debug!("going to update latest price for stock {}", stock.ticker);

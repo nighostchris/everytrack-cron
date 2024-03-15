@@ -24,10 +24,5 @@ pub async fn get_account_stock_holding_balance_snapshots(
   )
   .fetch_all(db_client)
   .await
-  .map_err(|e| {
-    format!(
-      "failed to get account stock holding balance snapshots from database. {}",
-      e
-    )
-  })
+  .map_err(|e| format!("failed to get account stock holding balance snapshots from database. {}", e))
 }
