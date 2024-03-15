@@ -33,6 +33,8 @@ pub async fn init() {
     create_cronjob(CRONJOB_NAMES[1], "0 */10 * * * * *", exchange_rate::update_latest_exchange_rates),
     // Update latest us stock prices every 10 minutes
     create_cronjob(CRONJOB_NAMES[2], "0 */10 * * * * *", stock::update_latest_us_stock_prices),
+    // Monitor future payment and update account balances + create transactions every hour
+    create_cronjob(CRONJOB_NAMES[3], "0 * * * * * *", future_payment::monitor_future_payments),
   ];
   debug!("going to add jobs to cronjob scheduler");
 

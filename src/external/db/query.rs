@@ -5,3 +5,4 @@ pub mod currency;
 pub mod exchange_rate;
 pub mod future_payment;
 pub mod stock;
+pub mod transaction;
