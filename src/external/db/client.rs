@@ -30,8 +30,7 @@ pub async fn init_mdb() -> Result<Client, String> {
   let client_options = ClientOptions::parse(db_conn_url)
     .await
     .map_err(|e| format!("Cannot initialize mongodb client options. {}", e))?;
-  let client = Client::with_options(client_options)
-    .map_err(|e| format!("Cannot initialize mongodb database connection. {}", e));
+  let client = Client::with_options(client_options).map_err(|e| format!("Cannot initialize mongodb database connection. {}", e));
 
   return client;
 }

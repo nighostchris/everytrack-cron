@@ -1,8 +1,8 @@
 use crate::external::db::client;
 use crate::external::db::query::currency::{get_all_currencies, Currency};
 use crate::external::db::query::exchange_rate::{
-  check_existing_exchange_rate, create_new_exchange_rate, update_exchange_rate,
-  CheckExistingExchangeRateParams, CreateNewExchangeRateParams, UpdateExchangeRateParams,
+  check_existing_exchange_rate, create_new_exchange_rate, update_exchange_rate, CheckExistingExchangeRateParams,
+  CreateNewExchangeRateParams, UpdateExchangeRateParams,
 };
 use dotenvy::var;
 use serde::{Deserialize, Serialize};
@@ -36,16 +36,9 @@ pub async fn record_exchange_rate_snapshots() -> Result<(), Box<dyn Error>> {
   let pg_client = client::init_pg().await?;
 
   // Calculate the string and unix format for yesterday
-  let raw_yesterday = OffsetDateTime::now_utc()
-    .checked_sub(Duration::days(1))
-    .unwrap();
+  let raw_yesterday = OffsetDateTime::now_utc().checked_sub(Duration::days(1)).unwrap();
   let yesterday = OffsetDateTime::new_utc(
-    Date::from_calendar_date(
-      raw_yesterday.year(),
-      raw_yesterday.month(),
-      raw_yesterday.day(),
-    )
-    .unwrap(),
+    Date::from_calendar_date(raw_yesterday.year(), raw_yesterday.month(), raw_yesterday.day()).unwrap(),
     Time::from_hms_nano(0, 0, 0, 0).unwrap(),
   );
   // YYYY-MM-DD format of yesterday
@@ -54,8 +47,7 @@ pub async fn record_exchange_rate_snapshots() -> Result<(), Box<dyn Error>> {
     .unwrap();
 
   // Fetch and process the exchange rate pairs
-  let records =
-    fetch_and_process_exchange_rates(&pg_client, string_format_yesterday.as_str()).await?;
+  let records = fetch_and_process_exchange_rates(&pg_client, string_format_yesterday.as_str()).await?;
   debug!("extracted all exchange rate pairs successfully. going to insert them into database");
 
   // Convert exchange rate into mongodb snapshot schema
@@ -66,10 +58,7 @@ pub async fn record_exchange_rate_snapshots() -> Result<(), Box<dyn Error>> {
       date: yesterday.unix_timestamp(),
       base_currency_id: r.base_currency_id.clone(),
       target_currency_id: r.target_currency_id.clone(),
-      _id: format!(
-        "{}-{}-{}",
-        r.base_currency_id, r.target_currency_id, string_format_yesterday
-      ),
+      _id: format!("{}-{}-{}", r.base_currency_id, r.target_currency_id, string_format_yesterday),
     })
     .collect::<Vec<ExchangeRateSnapshot>>();
 
@@ -81,9 +70,7 @@ pub async fn record_exchange_rate_snapshots() -> Result<(), Box<dyn Error>> {
     .insert_many(snapshots, None)
     .await
     .map_err(|e| format!("failed to insert snapshots into mongodb database. {}", e))?;
-  debug!(
-    "successfully inserted all exchange rate snapshots of {string_format_yesterday} into database"
-  );
+  debug!("successfully inserted all exchange rate snapshots of {string_format_yesterday} into database");
 
   // End database connection
   pg_client.close().await;
@@ -149,17 +136,10 @@ pub async fn update_latest_exchange_rates() -> Result<(), Box<dyn Error>> {
 }
 
 #[tracing::instrument]
-pub async fn fetch_and_process_exchange_rates(
-  pg_client: &Pool<Postgres>,
-  date: &str,
-) -> Result<Vec<ExchangeRateRecord>, Box<dyn Error>> {
+pub async fn fetch_and_process_exchange_rates(pg_client: &Pool<Postgres>, date: &str) -> Result<Vec<ExchangeRateRecord>, Box<dyn Error>> {
   // Get value for environment variable 'EXCHANGE_RATES_API_URL'
-  let exchange_rates_api_url = var("EXCHANGE_RATES_API_URL").map_err(|e| {
-    format!(
-      "missing config for environment variable EXCHANGE_RATES_API_URL. {}",
-      e
-    )
-  })?;
+  let exchange_rates_api_url =
+    var("EXCHANGE_RATES_API_URL").map_err(|e| format!("missing config for environment variable EXCHANGE_RATES_API_URL. {}", e))?;
 
   // Get all supported currencies from postgres database
   let currencies = get_all_currencies(&pg_client).await?;
@@ -170,39 +150,22 @@ pub async fn fetch_and_process_exchange_rates(
 
   for currency in currencies.iter() {
     let base_currency_ticker = currency.ticker.to_lowercase();
-    let interested_currencies = currencies
-      .iter()
-      .filter(|c| c.id != currency.id)
-      .collect::<Vec<&Currency>>();
-    let response = reqwest::get(format!(
-      "{exchange_rates_api_url}@{date}/v1/currencies/{base_currency_ticker}.json",
-    ))
-    .await
-    .map_err(|e| {
-      format!(
-        "failed to fetch exchange rates with base currency {base_currency_ticker}. {}",
-        e
-      )
-    })?;
+    let interested_currencies = currencies.iter().filter(|c| c.id != currency.id).collect::<Vec<&Currency>>();
+    let response = reqwest::get(format!("{exchange_rates_api_url}@{date}/v1/currencies/{base_currency_ticker}.json",))
+      .await
+      .map_err(|e| format!("failed to fetch exchange rates with base currency {base_currency_ticker}. {}", e))?;
 
     // Convert raw API response to consumable exchange rates json for processing
     let exchange_rate_data = response
       .json::<HashMap<String, Value>>()
       .await
-      .map_err(|e| {
-        format!(
-          "failed to fetch exchange rates with base currency {base_currency_ticker}. {}",
-          e
-        )
-      })?;
+      .map_err(|e| format!("failed to fetch exchange rates with base currency {base_currency_ticker}. {}", e))?;
     debug!("fetched exchange currencies API successfully. going to extract exchange rate pair");
 
     // Extract exchange rates pair based on target source currency
     let exchange_rate_list = exchange_rate_data
       .get(&base_currency_ticker)
-      .ok_or_else(|| {
-        format!("exchange rate list does not exist for base currency {base_currency_ticker}")
-      })?
+      .ok_or_else(|| format!("exchange rate list does not exist for base currency {base_currency_ticker}"))?
       .as_object()
       .unwrap();
     for target_currency in interested_currencies.iter() {
