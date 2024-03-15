@@ -22,8 +22,13 @@ pub async fn monitor_future_payments() -> Result<(), Box<dyn Error>> {
 
   for future_payment in future_payments.iter() {
     let today = OffsetDateTime::now_utc();
-    let start_of_today = OffsetDateTime::new_utc(
-      Date::from_calendar_date(today.year(), today.month(), today.day()).unwrap(),
+    let start_of_scheduled_at_date = OffsetDateTime::new_utc(
+      Date::from_calendar_date(
+        future_payment.scheduled_at.year(),
+        future_payment.scheduled_at.month(),
+        future_payment.scheduled_at.day(),
+      )
+      .unwrap(),
       Time::from_hms_nano(0, 0, 0, 0).unwrap(),
     );
 
@@ -34,7 +39,7 @@ pub async fn monitor_future_payments() -> Result<(), Box<dyn Error>> {
         future_payment.id,
         format_timestamp(future_payment.scheduled_at)?
       );
-      break;
+      continue;
     }
 
     // The scheduled date for future payment has fallen behind current timestamp
@@ -58,9 +63,7 @@ pub async fn monitor_future_payments() -> Result<(), Box<dyn Error>> {
     }
     debug!(
       "going to update balance for account {} from {} to {:.2}",
-      future_payment.account_id,
-      original_account_balance,
-      final_account_balance.to_string()
+      future_payment.account_id, original_account_balance, final_account_balance
     );
 
     // Update account balance after spending / receiving scheduled payment
@@ -68,7 +71,7 @@ pub async fn monitor_future_payments() -> Result<(), Box<dyn Error>> {
       &pg_client,
       UpdateAccountBalanceParams {
         id: future_payment.account_id,
-        balance: format!("{:.2}", final_account_balance.to_string()),
+        balance: format!("{:.2}", final_account_balance),
       },
     )
     .await?;
@@ -77,13 +80,13 @@ pub async fn monitor_future_payments() -> Result<(), Box<dyn Error>> {
     create_new_transaction(
       &pg_client,
       CreateNewTransactionParams {
-        executed_at: start_of_today,
         income: future_payment.income,
         name: future_payment.name.clone(),
         client_id: future_payment.client_id,
         account_id: future_payment.account_id,
         amount: future_payment.amount.clone(),
         currency_id: future_payment.currency_id,
+        executed_at: start_of_scheduled_at_date,
         remarks: future_payment.remarks.clone(),
         category: future_payment.category.clone(),
       },

@@ -1,0 +1,86 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n      SELECT id, client_id as \"client_id!\", account_id as \"account_id!\", currency_id as \"currency_id!\", name, amount, income, rolling, category, frequency, remarks, scheduled_at\n      FROM everytrack_backend.future_payment\n    ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "client_id!",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "account_id!",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 3,
+        "name": "currency_id!",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 4,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "amount",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "income",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 7,
+        "name": "rolling",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 8,
+        "name": "category",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "frequency",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 10,
+        "name": "remarks",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 11,
+        "name": "scheduled_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      false
+    ]
+  },
+  "hash": "53ce360e2e9c2ac1f30a4913ea5a39a9c71a2d0e1f68c7c84af05dbe3a60b452"
+}
