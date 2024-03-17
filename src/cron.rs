@@ -13,11 +13,12 @@ use tracing::{debug, error};
 // sec   min   hour   day of month   month   day of week   year
 // *     *     *      *              *       *             *
 
-static CRONJOB_NAMES: [&str; 4] = [
+static CRONJOB_NAMES: [&str; 5] = [
   "record_exchange_rate_snapshots",
   "update_latest_exchange_rates",
-  "update_latest_stock_prices",
+  "update_latest_us_stock_prices",
   "monitor_future_payments",
+  "update_latest_uk_stock_prices",
 ];
 
 #[tracing::instrument]
@@ -34,7 +35,9 @@ pub async fn init() {
     // Update latest us stock prices every 10 minutes
     create_cronjob(CRONJOB_NAMES[2], "0 */10 * * * * *", stock::update_latest_us_stock_prices),
     // Monitor future payment and update account balances + create transactions every hour
-    create_cronjob(CRONJOB_NAMES[3], "0 * * * * * *", future_payment::monitor_future_payments),
+    create_cronjob(CRONJOB_NAMES[3], "0 0 * * * * *", future_payment::monitor_future_payments),
+    // Update latest uk stock prices every 10 minutes
+    create_cronjob(CRONJOB_NAMES[4], "0 */10 * * * * *", stock::update_latest_uk_stock_prices),
   ];
   debug!("going to add jobs to cronjob scheduler");
 

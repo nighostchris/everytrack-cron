@@ -7,6 +7,16 @@ use yahoo_finance_api::YahooConnector;
 
 #[tracing::instrument]
 pub async fn update_latest_us_stock_prices() -> Result<(), Box<dyn Error>> {
+  update_latest_stock_prices("US").await
+}
+
+#[tracing::instrument]
+pub async fn update_latest_uk_stock_prices() -> Result<(), Box<dyn Error>> {
+  update_latest_stock_prices("UK").await
+}
+
+#[tracing::instrument]
+pub async fn update_latest_stock_prices(country_code: &str) -> Result<(), Box<dyn Error>> {
   // Setup postgresql database connection
   let pg_client = client::init_pg().await?;
 
@@ -14,7 +24,7 @@ pub async fn update_latest_us_stock_prices() -> Result<(), Box<dyn Error>> {
   let yahoo_finance_api_client = YahooConnector::new();
 
   // Get US country id from database
-  let country = get_country_by_code(&pg_client, "US").await?;
+  let country = get_country_by_code(&pg_client, country_code).await?;
   debug!("got us country id from postgresql database");
 
   // Get all supported US stocks in database
