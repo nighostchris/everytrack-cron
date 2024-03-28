@@ -5,10 +5,15 @@ mod logger;
 mod server;
 mod utils;
 
+use dotenvy::var;
+
 #[tokio::main]
 async fn main() {
   // Load environment variables
-  config::load_env_vars();
+  let environment = var("ENVIRONMENT").unwrap_or_else(|_| "development".to_string());
+  if environment == "development" {
+    config::load_env_vars();
+  }
   // Initialize logger
   logger::init();
   // Create a new database client

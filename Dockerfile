@@ -1,4 +1,3 @@
-# syntax = docker/dockerfile:1.2
 FROM rust:1.76.0 AS chef
 RUN cargo install cargo-chef
 WORKDIR /app
@@ -20,5 +19,4 @@ RUN cargo build --release --bin everytrack_cron
 FROM rust:1.76.0-slim AS runtime
 WORKDIR /app
 COPY --from=builder /app/target/release/everytrack_cron everytrack_cron
-RUN --mount=type=secret,id=_env,dst=/etc/secrets/.env cp /etc/secrets/.env .
 CMD ["./everytrack_cron"]
